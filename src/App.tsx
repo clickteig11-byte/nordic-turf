@@ -54,17 +54,17 @@ export default function App() {
       <section id="workbench" className="lab-section">
         <div className="lab-grid">
           <div>
-            <span className="hero-small-label">ENGINEERING SIMULATOR // NORDIC TURF & MEADOW</span>
+            <span className="hero-small-label">SOIL &amp; DRAINAGE CALCULATOR // NORDIC TURF &amp; MEADOW</span>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '2.2rem', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '-0.02em', color: 'var(--ink-primary)' }}>
-              SOIL MICROBIOME & ROOT PENETRATION
+              SOIL MICROBIOME &amp; ROOT PENETRATION
             </h2>
             <p style={{ color: 'var(--ink-muted)', lineHeight: 1.6, marginBottom: '2rem' }}>
-              Real-time metallurgical and operational tolerance calculator. Direct simulation against architectural standards with zero synthetic slop.
+              Calculate soil aeration depth, stormwater bio-swale absorption, and custom fescue seed blends for your property.
             </p>
 
             <div style={{ marginBottom: '1.5rem', background: 'var(--bg-color)', padding: '1.5rem', border: '1px solid var(--border-soft)' }}>
               <label style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '0.76rem', marginBottom: '0.75rem', fontWeight: 600 }}>
-                <span style={{ textTransform: 'uppercase' }}>SIMULATED LOAD CALIBRATION</span>
+                <span style={{ textTransform: 'uppercase' }}>SOIL COMPACTION &amp; DRAINAGE LOAD</span>
                 <span style={{ color: 'var(--accent-color)', fontWeight: 700 }}>{metricValue} CM DEPTH</span>
               </label>
               <input
