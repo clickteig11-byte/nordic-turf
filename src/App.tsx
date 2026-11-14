@@ -123,6 +123,7 @@ export default function App() {
   const [estateAcreageInput, setEstateAcreageInput] = useState('1.5 - 3.0 Acres');
   const [primaryGoal, setPrimaryGoal] = useState('organic-conversion');
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [takeoffRef, setTakeoffRef] = useState('');
 
   // Accessible IDs
   const acresId = useId();
@@ -137,6 +138,7 @@ export default function App() {
   // Lime calculation: Target is pH 6.5
   // Raising 1.0 pH unit in sandy loam requires ~50 lbs/1,000 sq ft of pure calcitic limestone
   // Silt loam requires ~80 lbs/1,000 sq ft; clay requires ~100 lbs/1,000 sq ft.
+  // Note: SMP Buffer pH lab test is recommended before actual field application to measure reserve acidity.
   const phDelta = Math.max(0, 6.5 - currentPh);
   const textureMultiplier = soilTextureKey === 'engineered_sand' ? 35 : soilTextureKey === 'sandy_loam' ? 50 : soilTextureKey === 'fine_loam' ? 80 : 105;
   const limePoundsTotal = Math.round((phDelta * textureMultiplier * sqFootage) / 1000);
@@ -164,7 +166,26 @@ export default function App() {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const refCode = `NT-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    setTakeoffRef(refCode);
     setFormSubmitted(true);
+    try {
+      const payload = {
+        refCode,
+        estateName,
+        estateLocation,
+        estateAcreageInput,
+        primaryGoal,
+        acres,
+        currentPh,
+        limeTonsTotal,
+        compostYardsNeeded,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem(`turf_takeoff_${refCode}`, JSON.stringify(payload));
+    } catch {
+      // Local storage fallback
+    }
   };
 
   return (
@@ -457,6 +478,9 @@ export default function App() {
                     ? `To reduce alkalinity across ${acres} acres down to 6.5, apply ${sulfurPoundsTotal.toLocaleString()} lbs of organic elemental sulfur.`
                     : `Rhizosphere pH is optimal for nutrient uptake. Zero chemical buffer needed.`}
                 </p>
+                <div style={{ marginTop: '0.75rem', padding: '0.6rem 0.85rem', background: 'rgba(235, 230, 218, 0.5)', borderLeft: '3px solid #738A6E', fontSize: '0.8rem', color: '#57534E' }}>
+                  <strong>Agronomic Protocol Note:</strong> Tonnage calculations represent field screening estimates based on soil texture class. Final bulk amendment prescriptions require verification against an SMP or Mehlich Buffer pH lab analysis (UMass Amherst or Penn State Soil Lab) to account for sub-surface reserve acidity.
+                </div>
               </div>
 
               <div className="prescription-matrix">
@@ -763,20 +787,29 @@ export default function App() {
                 Thank you, <strong>{estateName || 'Estate Manager'}</strong>. Your evaluation request for <strong>{estateLocation || 'your property'}</strong> has been assigned to our field agronomy team. We will contact you within 24 hours to schedule the pneumatic core extraction.
               </p>
               <div className="success-details-list">
+                <span>AUDIT REF: #{takeoffRef}</span>
+                <span>·</span>
                 <span>ESTATE SCOPE: {estateAcreageInput}</span>
                 <span>·</span>
                 <span>PRIMARY FOCUS: {primaryGoal.toUpperCase().replace('-', ' ')}</span>
                 <span>·</span>
                 <span>REGION: GREATER NEW ENGLAND</span>
               </div>
-              <button 
-                type="button" 
-                onClick={() => setFormSubmitted(false)}
-                className="turf-btn-secondary"
-                style={{ marginTop: '1.5rem' }}
-              >
-                SUBMIT ANOTHER PROPERTY
-              </button>
+              <div style={{ marginTop: '1.25rem', display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <a 
+                  href={`mailto:agronomy@nordicturf.com?subject=Soil%20Audit%20%23${takeoffRef}&body=Estate%3A%20${encodeURIComponent(estateName)}%0ALocation%3A%20${encodeURIComponent(estateLocation)}%0AScope%3A%20${estateAcreageInput}%0AGoal%3A%20${primaryGoal}%0AAcreage%3A%20${acres}%20Acres%0AActive%20pH%3A%20${currentPh}%0AEstimated%20Lime%3A%20${limeTonsTotal}%20Tons%0ACompost%3A%20${compostYardsNeeded}%20CY`}
+                  className="turf-btn-primary"
+                >
+                  EMAIL AUDIT TO FIELD AGRONOMIST
+                </a>
+                <button 
+                  type="button" 
+                  onClick={() => setFormSubmitted(false)}
+                  className="turf-btn-secondary"
+                >
+                  SUBMIT ANOTHER PROPERTY
+                </button>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleFormSubmit} className="estate-intake-form">
